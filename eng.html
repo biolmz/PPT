@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《中国科学技术史》精读课 · 课堂讲述版</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='10' fill='%23A93B2C'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23F6F1E5' font-family='serif' font-weight='700'%3E史%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@600;700;900&family=Noto+Sans+SC:wght@400;500;700&family=EB+Garamond:ital,wght@0,500;0,600;0,700;1,500&display=swap">
+<style>
+:root{
+  --paper:#F6F1E5; --paper-deep:#EDE4CE; --paper-soft:#FBF8F0;
+  --ink:#2C2A24; --ink-soft:#5C574B; --ink-faint:#8A8374;
+  --azure:#23415C; --azure-deep:#16293C; --azure-soft:#E3E9F0;
+  --cinnabar:#A93B2C; --cinnabar-deep:#8C2F22; --cinnabar-soft:#F4E2DE;
+  --gold:#B8933F; --gold-soft:#F1E8D3;
+  --celadon:#5F7F70; --celadon-soft:#E4EDE7;
+  --line:rgba(44,42,36,.14);
+  --serif:"Noto Serif SC","Songti SC","SimSun",serif;
+  --sans:"Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --lat:"EB Garamond",Georgia,"Times New Roman",serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{overflow:hidden}
+body{
+  font-family:var(--sans);color:var(--ink);line-height:1.75;
+  background:
+    radial-gradient(1200px 500px at 85% -5%, rgba(184,147,63,.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 20%, rgba(35,65,92,.08), transparent 55%),
+    var(--paper);
+  font-size:18px;
+}
+h1,h2,h3,h4{font-family:var(--serif);line-height:1.3}
+/* ===== 演示顶栏 ===== */
+.deckbar{
+  position:fixed;top:0;left:0;right:0;z-index:60;
+  display:flex;align-items:center;gap:14px;
+  padding:8px clamp(14px,3vw,40px);
+  background:rgba(22,41,60,.94);color:#EDE6D6;
+  box-shadow:0 4px 18px rgba(0,0,0,.25);backdrop-filter:blur(6px);
+}
+.deckbar .db-title{font-family:var(--serif);font-weight:700;font-size:15px;flex:none;white-space:nowrap}
+.deckbar .db-title small{display:block;font-family:var(--lat);font-weight:600;color:var(--gold);font-size:10px;letter-spacing:.12em}
+.deckbar .progress{flex:1;height:4px;background:rgba(246,241,229,.18);border-radius:99px;overflow:hidden}
+.deckbar .progress i{display:block;height:100%;width:0;background:var(--gold);border-radius:99px;transition:width .3s ease}
+.deckbar .page{font-family:var(--lat);font-weight:700;font-size:15px;color:var(--gold);flex:none}
+.deckbar button{
+  border:1px solid rgba(246,241,229,.35);background:transparent;color:#EDE6D6;
+  font-family:var(--sans);font-size:12.5px;padding:5px 12px;border-radius:99px;cursor:pointer;
+  transition:all .15s;flex:none;white-space:nowrap;
+}
+.deckbar button:hover{background:rgba(246,241,229,.16);border-color:rgba(246,241,229,.6)}
+.deckbar button.on{background:var(--gold);border-color:var(--gold);color:#3a2c08;font-weight:700}
+/* ===== 幻灯容器（无滚动，显隐切换） ===== */
+.deck{height:100vh;overflow:hidden}
+.slide{
+  height:100vh;display:none;
+  flex-direction:column;justify-content:center;
+  padding:calc(48px + 1vh) clamp(18px,4.5vw,72px) 26px;
+  position:relative;
+}
+.slide.active{display:flex}
+.slide .sno{
+  position:absolute;right:clamp(16px,3vw,48px);bottom:26px;
+  font-family:var(--lat);font-weight:700;color:var(--ink-faint);font-size:15px;letter-spacing:.1em;
+}
+/* ===== 页内元素字号（投屏标准） ===== */
+.h1{font-size:clamp(36px,5vw,66px);font-weight:900;color:var(--azure-deep);letter-spacing:.02em}
+.h2{font-size:clamp(26px,3.6vw,46px);font-weight:900;color:var(--azure-deep)}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--serif);font-weight:700;color:var(--cinnabar);font-size:clamp(15px,1.6vw,20px);letter-spacing:.16em;margin-bottom:14px}
+.kicker::before{content:"";width:30px;height:3px;background:var(--cinnabar);display:inline-block}
+.lead{font-size:clamp(17px,2.7vh,26px);color:var(--ink-soft);max-width:1100px;margin-top:10px;line-height:1.8}
+.body{font-size:clamp(16px,2.6vh,23px);color:var(--ink);max-width:1200px;line-height:1.8}
+.small{font-size:clamp(14px,1.4vw,18px);color:var(--ink-faint)}
+/* ===== 通用卡片 ===== */
+.card{background:var(--paper-soft);border:1px solid var(--line);border-radius:16px;padding:clamp(13px,1.6vw,22px);box-shadow:0 10px 30px rgba(44,42,36,.08)}
+.pill{display:inline-block;font-size:clamp(13px,1.3vw,16px);font-weight:700;padding:4px 14px;border-radius:999px;background:var(--azure-soft);color:var(--azure)}
+.pill.zhuxi{background:var(--cinnabar-soft);color:var(--cinnabar-deep)}
+.pill.jin{background:var(--gold-soft);color:#7a5f1e}
+.pill.qing{background:var(--celadon-soft);color:var(--celadon)}
+/* ===== 讲稿（教师备注） ===== */
+.coach{
+  display:none;margin-top:22px;border:1px dashed var(--gold);border-radius:12px;
+  background:var(--gold-soft);padding:14px 18px;font-size:clamp(14px,1.5vw,18px);color:#6b531c;
+  max-width:1100px;line-height:1.8;
+}
+.coach b{color:#7a5f1e}
+.coach::before{content:"讲稿提示";display:block;font-family:var(--serif);font-weight:700;color:#7a5f1e;font-size:13px;letter-spacing:.12em;margin-bottom:4px}
+.deck.coach-mode .coach{display:block}
+/* ===== 原文展示 ===== */
+.orig{font-family:var(--lat);font-size:clamp(22px,2.6vw,34px);line-height:1.95;color:var(--ink)}
+.orig .hl{color:var(--cinnabar-deep);font-weight:700;border-bottom:3px solid var(--gold)}
+.orig-cn{font-family:var(--serif);font-size:clamp(18px,2vw,26px);color:var(--azure-deep);margin-top:16px;background:var(--azure-soft);border-left:5px solid var(--azure);padding:12px 18px;border-radius:0 12px 12px 0;max-width:1200px;line-height:1.85}
+/* ===== 领域标签 ===== */
+.fields{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;max-width:1200px}
+.fields span{
+  font-family:var(--serif);border:2px solid var(--azure);color:var(--azure);border-radius:12px;
+  padding:7px 16px;font-size:clamp(16px,1.9vw,22px);background:var(--paper-soft);font-weight:700;
+}
+.fields span small{display:block;font-family:var(--lat);font-size:clamp(12px,1.1vw,15px);color:var(--gold);font-weight:600;letter-spacing:.04em;text-align:center}
+/* ===== 词卡（课堂大字版） ===== */
+.vocab-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:1200px;margin-top:14px}
+.vc{
+  background:var(--paper-soft);border:1px solid var(--line);border-radius:14px;padding:12px 15px;
+  box-shadow:0 8px 22px rgba(44,42,36,.07);
+}
+.vc .en{font-family:var(--lat);font-size:clamp(21px,2.4vw,30px);font-weight:700;color:var(--azure-deep);line-height:1.25}
+.vc .ipa{font-size:clamp(12px,1.1vw,15px);color:var(--ink-faint);margin-top:2px}
+.vc .zh{font-family:var(--serif);font-size:clamp(15px,1.6vw,21px);color:var(--cinnabar-deep);font-weight:700;margin-top:5px}
+.vc .ex{font-family:var(--lat);font-size:clamp(12px,1.3vw,16px);color:var(--ink-soft);margin-top:7px;line-height:1.55;border-top:1px dashed var(--line);padding-top:5px}
+.vc .ex .cn{font-family:var(--sans);color:var(--ink-faint);font-size:clamp(11px,1.1vw,14px);display:block}
+.vc .exam{font-size:clamp(11.5px,1.15vw,15px);background:var(--celadon-soft);color:var(--celadon);border-radius:8px;padding:5px 8px;margin-top:7px;line-height:1.55}
+/* ===== 语法对比 ===== */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:1200px;margin-top:16px}
+.duo .card h4{font-size:clamp(20px,2.2vw,30px);color:var(--azure-deep)}
+.duo .card .fml{font-family:var(--lat);font-size:clamp(18px,2vw,26px);color:var(--cinnabar-deep);font-weight:700;margin:6px 0}
+.duo .card ul{list-style:none;margin-top:6px}
+.duo .card li{font-size:clamp(15px,1.6vw,21px);color:var(--ink-soft);padding:5px 0 5px 22px;position:relative}
+.duo .card li::before{content:"◆";position:absolute;left:0;color:var(--gold);font-size:13px;top:10px}
+@media (max-width:900px){.duo{grid-template-columns:1fr}}
+/* ===== 时间轴（大字版） ===== */
+.timeline{max-width:1200px;margin-top:10px}
+.tl-row{display:grid;grid-template-columns:130px 30px 1fr;gap:0}
+.tl-time{padding:8px 0;text-align:right;font-family:var(--lat);font-weight:700;color:var(--azure);font-size:clamp(16px,1.9vw,24px);border-top:1px solid var(--line)}
+.tl-dot{position:relative;border-top:1px solid var(--line)}
+.tl-dot::before{content:"";position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;background:var(--paper);border:3px solid var(--cinnabar)}
+.tl-card{padding:7px 0 7px 24px;border-top:1px solid var(--line)}
+.tl-card h4{font-size:clamp(15px,1.7vw,21px);color:var(--azure-deep)}
+.tl-card p{font-size:clamp(12.5px,1.3vw,16px);color:var(--ink-soft);margin-top:1px}
+/* ===== 思政主题 ===== */
+.v3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:1200px;margin-top:16px}
+.v3 .card{border-top:5px solid var(--cinnabar)}
+.v3 .card:nth-child(2){border-top-color:var(--azure)}
+.v3 .card:nth-child(3){border-top-color:var(--celadon)}
+.v3 h4{font-size:clamp(20px,2.2vw,30px);color:var(--azure-deep);margin-bottom:6px}
+.v3 p{font-size:clamp(15px,1.55vw,20px);color:var(--ink-soft);line-height:1.85}
+.v3 .q{font-size:clamp(14px,1.5vw,19px);margin-top:10px;background:var(--gold-soft);border-left:4px solid var(--gold);padding:9px 13px;border-radius:0 10px 10px 0;color:#6b531c;font-weight:600}
+@media (max-width:900px){.v3{grid-template-columns:1fr}}
+/* ===== 课堂互动题 ===== */
+.quiz-slide .qcard{max-width:1100px;margin-bottom:8px}
+.qstem{font-size:clamp(16px,2vw,23px);color:var(--ink);font-weight:600}
+.qstem .en{font-family:var(--lat)}
+.reveal-btn{
+  margin-top:7px;border:2px solid var(--azure);background:transparent;color:var(--azure);
+  font-family:var(--sans);font-weight:700;font-size:clamp(13px,1.4vw,17px);
+  padding:5px 16px;border-radius:99px;cursor:pointer;transition:all .15s;
+}
+.reveal-btn:hover{background:var(--azure);color:#F6F1E5}
+.reveal-ans{display:none;margin-top:12px;font-size:clamp(17px,1.9vw,24px);background:var(--celadon-soft);color:#2f5545;border-radius:10px;padding:12px 18px;line-height:1.8}
+.reveal-ans.show{display:block;animation:fa .25s ease}
+.reveal-ans b{color:var(--cinnabar-deep)}
+@keyframes fa{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+/* ===== 长难句色块 ===== */
+.slab{font-family:var(--lat);font-size:clamp(17px,2vw,26px);line-height:1.9;max-width:1200px}
+.slab span{display:inline-block;margin:1px 1px;padding:1px 8px;border-radius:8px;cursor:pointer;transition:all .15s;border:2px solid transparent}
+.slab span:hover{transform:translateY(-2px)}
+.slab span.sel{outline:3px solid var(--cinnabar);transform:translateY(-2px)}
+.slab .m{background:rgba(184,147,63,.28)}
+.slab .c{background:rgba(169,59,44,.35)}
+.slab .s{background:rgba(95,127,112,.35)}
+.slab .p{background:rgba(227,233,240,.4)}
+.slab .a{background:rgba(246,241,229,.25)}
+.slab .r{background:rgba(95,127,112,.28)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:clamp(12.5px,1.3vw,17px);color:var(--ink-soft)}
+.legend i{width:18px;height:18px;border-radius:5px;display:inline-block;vertical-align:-3px;margin-right:6px}
+/* ===== 翻页按钮 ===== */
+.pg{position:fixed;top:50%;transform:translateY(-50%);z-index:55;width:56px;height:56px;border-radius:50%;
+  background:rgba(22,41,60,.85);color:#EDE6D6;border:none;cursor:pointer;font-size:24px;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;backdrop-filter:blur(4px);
+  opacity:.5;font-family:var(--lat);line-height:1}
+.pg:hover{opacity:1;transform:translateY(-50%) scale(1.08)}
+.pg.prev{left:14px}.pg.next{right:14px}
+@media (max-width:900px){.pg{display:none}}
+/* ===== 图片 ===== */
+.pic{border-radius:14px;border:1px solid var(--line);box-shadow:0 10px 30px rgba(44,42,36,.12);display:block;object-fit:cover}
+/* ===== 移动端适配（预览用，允许页内内容完整展示） ===== */
+@media (max-width:900px){
+  html,body{overflow:auto}
+  body{font-size:16px}
+  .deck{height:auto;overflow:visible}
+  .slide{height:auto;padding:86px 18px 44px}
+  .vocab-grid{grid-template-columns:1fr 1fr}
+  .fields span{padding:8px 14px}
+  .tl-row{grid-template-columns:80px 24px 1fr}
+}
+@media (max-width:560px){.vocab-grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<!-- ===== 演示顶栏 ===== -->
+<header class="deckbar">
+  <div class="db-title">《中国科学技术史》精读课<small>SCIENCE &amp; CIVILISATION IN CHINA · CET-4</small></div>
+  <div class="progress"><i id="progBar"></i></div>
+  <span class="page" id="pageNo">1 / 24</span>
+  <button id="coachBtn" title="显示/隐藏每页讲稿提示（快捷键 T）">讲稿</button>
+  <button id="fsBtn" title="全屏放映（快捷键 F）">全屏</button>
+</header>
+<button class="pg prev" id="pgPrev" aria-label="上一页">‹</button>
+<button class="pg next" id="pgNext" aria-label="下一页">›</button>
+
+<main class="deck" id="deck">
+<!-- ===== 01 封面 ===== -->
+<section class="slide active" data-title="封面">
+  <div style="position:absolute;inset:0;pointer-events:none;opacity:.5;background:radial-gradient(900px 400px at 20% 0%,rgba(169,59,44,.10),transparent 60%)"></div>
+  <div style="display:flex;gap:clamp(20px,4vw,60px);align-items:center;max-width:1300px">
+    <div style="flex:1.25;min-width:0">
+      <div class="kicker">大学英语</div>
+      <h1 class="h1">文明的"首创"之书</h1>
+      <div style="font-family:var(--lat);color:var(--gold);font-size:clamp(17px,2vw,26px);font-weight:600;letter-spacing:.05em;margin-top:6px">The Story of Chinese Science</div>
+      <p class="lead" style="margin-top:16px">课文精读：《中国科学技术史》（Science and Civilisation in China）第 14、15 段</p>
+    </div>
+    <div style="flex:.75;max-width:330px;min-width:0" class="cover-book">
+      <div style="background:linear-gradient(160deg,var(--azure),var(--azure-deep));border-radius:16px;padding:30px 24px 22px;color:#EDE6D6;transform:rotate(2deg);box-shadow:0 24px 50px rgba(22,41,60,.35);border:1px solid rgba(255,255,255,.14)">
+        <div style="font-family:var(--lat);font-size:12px;letter-spacing:.3em;color:var(--gold)">CAMBRIDGE</div>
+        <div style="font-family:var(--lat);font-weight:700;font-size:clamp(18px,2vw,24px);line-height:1.3;margin:10px 0 4px">SCIENCE AND CIVILISATION IN CHINA</div>
+        <div style="font-family:var(--serif);font-size:15px;margin-top:14px;color:var(--gold-soft)">Joseph Needham</div>
+        <div style="font-family:var(--serif);font-size:22px;font-weight:700;margin-top:14px;color:#F6F1E5;letter-spacing:.1em;margin-right:60px">中国科学技术史</div>
+        <div style="font-family:var(--serif);font-size:13px;color:#C9CFD8;margin-top:2px;margin-right:60px">Volume VII · Part II · 第七卷第二分册</div>
+        <div style="position:absolute;right:26px;bottom:24px;width:52px;height:52px;border-radius:10px;background:var(--cinnabar);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:26px;font-weight:900;color:#F6F1E5;transform:rotate(-6deg);box-shadow:0 6px 14px rgba(0,0,0,.3)">史</div>
+      </div>
+    </div>
+  </div>
+  <div class="coach">开场（1 分钟）：今天精读一篇关于《中国科学技术史》的课文。先问学生：听说过这本书吗？知道作者李约瑟吗？带着好奇心进入课文。</div>
+  <span class="sno">01 / 21</span>
+</section>
+
+
+
+<!-- ===== 03 导入：李约瑟 ===== -->
+<section class="slide" data-title="导入·李约瑟">
+  <div class="kicker">LEAD-IN · 课堂导入</div>
+  <div style="display:grid;grid-template-columns:340px 1fr;gap:clamp(20px,4vw,48px);align-items:center;max-width:1200px">
+    <img src="assets/needham-portrait.jpg" alt="李约瑟肖像" class="pic" style="width:100%;aspect-ratio:4/3">
+    <div>
+      <h2 class="h2">他，用一本书为中国科技"正名"</h2>
+      <p class="lead" style="margin-top:12px"><b style="color:var(--azure)">李约瑟（Joseph Needham，1900–1995）</b>，英国生物化学家、科学史家，英国皇家学会会士。1948 年起编著《中国科学技术史》，1954 年出版首卷，1994 年当选<b style="color:var(--cinnabar)">中国科学院外籍院士</b>。</p>
+      <p class="lead">他穷尽大半生，只为回答一个问题：<b style="color:var(--azure)">中国文明究竟为世界贡献过多少"首创"？</b></p>
+    </div>
+  </div>
+  <div class="coach">导入（1 分钟）：指着肖像介绍李约瑟，强调"英国学者研究中国科技史"这个反差，制造兴趣。可问：为什么一个外国人对中国科技史这么着迷？</div>
+  <span class="sno">03 / 21</span>
+</section>
+<!-- ===== 04 课文 14 段 ===== -->
+<section class="slide" data-title="课文第14段">
+  <div class="kicker">TEXT · 课文精读 · PARA. 14</div>
+  <h2 class="h2">"首创"太多，七卷装不下</h2>
+  <p class="orig" style="margin-top:22px">Indeed, there were so many <span class="hl">'firsts'</span> after 'firsts', including those in chemistry, mathematics, navigation(航海/ˌnævɪˈɡeɪʃn/), medicine, botany, mechanics, civil engineering(土木工程) and agriculture, that, although the plan for seven volumes didn't change, <span class="hl">volumes 4 to 7 were split into 24 parts</span>. Several of these were completed by <span class="hl">academics</span> from the <span class="hl">Needham Research Institute</span> and <span class="hl">published</span> after his death in 1995.</p>
+  <p class="orig-cn">大意：书中的"首创"接二连三、涵盖八大学科，以至于七卷计划虽未改变，第 4–7 卷却被拆成 24 个分册；部分由李约瑟研究所的学者在其 1995 年逝世后完成出版。</p>
+  <div class="coach">朗读环节（2 分钟）：请一位同学朗读第 14 段，全班划出生词。朗读后提问：这段讲了一件什么"意外的事"？（答案：书越写越多，七卷拆成了 24 册。）</div>
+  <span class="sno">04 / 21</span>
+</section>
+
+<!-- ===== 05 14 段拆解① ===== -->
+<section class="slide" data-title="14段·so many firsts">
+  <div class="kicker">FOCUS 1 · 语言点</div>
+  <h2 class="h2">so…that… 结果状语从句</h2>
+  <p class="orig" style="margin-top:18px">there were <b style="color:var(--cinnabar)">so many</b> 'firsts' after 'firsts' <b style="color:var(--cinnabar)">that</b> volumes 4 to 7 were split…</p>
+  <p class="body" style="margin-top:14px"><b>结构：</b>so + 形容词/副词 + that 从句 ＝"如此……以至于……"　|　<b>变式：</b>so many / few / much / little + 名词 + that</p>
+  <p class="body" style="color:var(--cinnabar-deep)"><b>'firsts' after 'firsts'</b>＝"首创"接二连三；'firsts' 名词化＋复数＋引号，特指"首次做到的事"。</p>
+  <div style="margin-top:24px">
+    <div class="kicker" style="margin-bottom:10px">262 项"首创"覆盖的八大领域</div>
+    <div class="fields">
+      <span>化学<small>chemistry</small></span><span>数学<small>mathematics</small></span><span>航海<small>navigation</small></span><span>医学<small>medicine</small></span><span>植物学<small>botany</small></span><span>力学<small>mechanics</small></span><span>土木工程<small>civil engineering</small></span><span>农业<small>agriculture</small></span>
+    </div>
+  </div>
+  <div class="coach">重点讲解（3 分钟）：① 板书 so…that 结构，让学生现场造句；② 抢读八大领域英文，强调 botany / mechanics 的发音；③ 解释 'firsts' 为什么加引号加复数。</div>
+  <span class="sno">05 / 21</span>
+</section>
+
+<!-- ===== 06 14 段拆解② ===== -->
+<section class="slide" data-title="14段·although与被动">
+  <div class="kicker">FOCUS 2 · 语言点</div>
+  <h2 class="h2">although 让步从句 ＋ 被动语态</h2>
+  <p class="orig" style="margin-top:18px"><b style="color:var(--cinnabar)">although</b> the plan for seven volumes didn't change, volumes 4 to 7 <b style="color:var(--cinnabar)">were split</b> into 24 parts.</p>
+  <p class="body" style="margin-top:14px"><b>although</b>＝"虽然"，不能与 but 连用，可换成 though / even though。</p>
+  <p class="body"><b>被动语态：</b>were split（be + 过去分词）——split 三式同形 split-split-split。</p>
+  <p class="body" style="color:var(--azure-deep)"><b>接力工程：</b>Several of these <b>were completed</b> by academics … and <b>published</b> after his death in 1995.（and 后省略 were）</p>
+  <div class="coach">重点讲解（2 分钟）：① 强调 although 不与 but 连用（四级高频改错点）；② 让学生找出本段所有被动结构；③ 顺势讲"李约瑟去世后，学者接力完成"的团队精神，为思政铺垫。</div>
+  <span class="sno">06 / 21</span>
+</section>
+
+<!-- ===== 07 课文 15 段 ===== -->
+<section class="slide" data-title="课文第15段">
+  <div class="kicker">TEXT · 课文精读 · PARA. 15</div>
+  <h2 class="h2">最后一册：262 项"首创"总清单</h2>
+  <p class="orig" style="margin-top:22px">The final book in the collection, Science and Civilisation in China, Volume 7, Part II: <span class="hl">General Conclusions and Reflections</span>, <span class="hl">lists</span> the <span class="hl">262 'firsts'</span> that were described in earlier volumes of the work.</p>
+  <p class="orig-cn">大意：整套丛书的最后一册——《中国科学技术史》第七卷第二分册《总结与反思》——列出了此前各卷记述的 262 项"首创"。</p>
+  <div class="coach">朗读环节（1 分钟）：请另一位同学朗读。提问：262 是什么？（"首创"的总数；这段是全书"成绩单"。）</div>
+  <span class="sno">07 / 21</span>
+</section>
+
+
+
+
+
+
+
+<!-- ===== 15 文化：时间轴 ===== -->
+<section class="slide" data-title="文化·六十年">
+  <div class="kicker">CULTURE · 一部巨著的六十年</div>
+  <h2 class="h2">从一个人，到一支跨国团队</h2>
+  <div class="timeline">
+    <div class="tl-row"><div class="tl-time">1900</div><div class="tl-dot"></div><div class="tl-card"><h4>李约瑟出生于伦敦</h4><p>早年研究生物化学，后转向中国科技史。</p></div></div>
+    <div class="tl-row"><div class="tl-time">1948</div><div class="tl-dot"></div><div class="tl-card"><h4>开始编著《中国科学技术史》</h4><p>原计划一卷，材料越来越多，膨胀为七卷。</p></div></div>
+    <div class="tl-row"><div class="tl-time">1954</div><div class="tl-dot"></div><div class="tl-card"><h4>首卷《导论》出版</h4><p>剑桥大学出版社；随后卷 2、卷 3 相继问世。</p></div></div>
+    <div class="tl-row"><div class="tl-time">1994</div><div class="tl-dot"></div><div class="tl-card"><h4>当选中国科学院外籍院士</h4><p>其著作表达了对中国人民创造才能的深刻敬意。</p></div></div>
+    <div class="tl-row"><div class="tl-time">1995</div><div class="tl-dot"></div><div class="tl-card"><h4>李约瑟逝世（3 月 25 日）</h4><p>未完卷册由李约瑟研究所学者接力完成。</p></div></div>
+    <div class="tl-row"><div class="tl-time">2004</div><div class="tl-dot"></div><div class="tl-card"><h4>卷七二分册《结论与反思》出版</h4><p>距首卷已 50 年，列出全部 262 项"首创"。</p></div></div>
+    <div class="tl-row"><div class="tl-time">至今</div><div class="tl-dot"></div><div class="tl-card"><h4>工程仍在延续</h4><p>已出版 25 个分册以上，新分册仍在编撰。</p></div></div>
+  </div>
+  <div class="coach">文化讲述（3 分钟）：按时间轴口述，重点讲"1954 → 2004 → 至今"的跨度与接力。提问：为什么说这套书是"跨国接力工程"？（李约瑟逝世后，由研究所的多国学者继续完成）</div>
+  <span class="sno">15 / 21</span>
+</section>
+
+<!-- ===== 16 文化：李约瑟之问 ===== -->
+<section class="slide" data-title="文化·李约瑟之问">
+  <div class="kicker">CULTURE · NEEDHAM'S QUESTION</div>
+  <h2 class="h2">"李约瑟之问"：一个世界的思考</h2>
+  <div style="background:linear-gradient(160deg,var(--azure),var(--azure-deep));border-radius:16px;padding:clamp(20px,3vw,38px);color:#EDE6D6;max-width:1200px;margin-top:20px;box-shadow:0 14px 36px rgba(22,41,60,.3)">
+    <p style="font-family:var(--serif);font-size:clamp(18px,2.2vw,28px);line-height:2">"中国的这些发明和发现往往远远超过同时代的欧洲，特别是在 15 世纪之前更是如此……而中国文明却未能在亚洲产生与此相似的近代科学。"</p>
+    <p style="font-size:clamp(13px,1.4vw,17px);color:var(--gold-soft);margin-top:12px">—— 李约瑟《中国科学技术史》第一卷序言（转引自人民网 2015 年报道）</p>
+  </div>
+  <p class="body" style="margin-top:20px"><b style="color:var(--azure)">课堂讨论（2 分钟）：</b>为什么近代科学没有首先出现在中国？你有自己的答案吗？—— 历史辉煌值得自豪，更要在今天把科技的主动权握在自己手中。</p>
+  <div class="coach">讨论环节（3 分钟）：抛出"李约瑟之问"，组织同桌 1 分钟讨论，请 2–3 位代表发言。老师归纳：不回避问题、不妄自菲薄，用今天的奋斗作答——这是文化自信的成熟姿态。</div>
+  <span class="sno">16 / 21</span>
+</section>
+
+<!-- ===== 17 思政 ===== -->
+<section class="slide" data-title="思政·三大主题">
+  <div class="kicker">VALUES · 思政课堂</div>
+  <h2 class="h2">从一篇课文，看三个主题</h2>
+  <div class="v3">
+    <div class="card">
+      <span class="pill zhuxi">文化自信</span>
+      <h4 style="margin-top:10px">证据胜于口号</h4>
+      <p>中国古代科技成就不是传说，而是被一位异国学者用几十年、262 项实证记录的事实。自信来自对自身文明的深入了解与准确表达。</p>
+      <p class="q">思考：你会用哪一句英文介绍一项中国发明？</p>
+    </div>
+    <div class="card">
+      <span class="pill">科学精神</span>
+      <h4 style="margin-top:10px">实事求是，持之以恒</h4>
+      <p>262 项逐一考证、七卷拆成 24 册、逝世后学者接力——严谨、求真、协作、坚持，正是做学问与做人的共同底色。</p>
+      <p class="q">思考：英语学习中，"实事求是"体现在哪里？</p>
+    </div>
+    <div class="card">
+      <span class="pill qing">文明互鉴</span>
+      <h4 style="margin-top:10px">开放包容，双向奔赴</h4>
+      <p>英国学者为中国文明立传，中国学界又将其译回中文。开放带来进步；越是民族的，越是世界的。</p>
+      <p class="q">思考：对外交流中如何既自信又包容？</p>
+    </div>
+  </div>
+  <div class="coach">思政升华（3 分钟）：三张卡逐条讲。可结合学生专业（如生物）谈杂交水稻、中医药的当代价值；收尾用"各美其美，美美与共"。</div>
+  <span class="sno">17 / 21</span>
+</section>
+
+
+<!-- ===== 19 课堂互动② ===== -->
+<section class="slide quiz-slide" data-title="课堂互动·选择与翻译">
+  <div class="kicker">CLASS ACTIVITY 2 · 选择与翻译</div>
+  <h2 class="h2">词汇 · 语法 · 翻译</h2>
+  <div class="qcard card" style="margin-top:20px">
+    <p class="qstem"><b>1.</b> Volumes 4 to 7 were ____ into 24 parts.</p>
+    <p class="body" style="color:var(--ink-soft);font-size:clamp(13px,1.3vw,17px)">A. broken　B. split　C. separated　D. divided</p>
+    <button class="reveal-btn">显示答案</button>
+    <div class="reveal-ans"><b>B</b>。课文原词 split into；break into 闯入/突然开始；separate 侧重分离；divide 侧重平均划分。</div>
+  </div>
+  <div class="qcard card">
+    <p class="qstem"><b>2.</b> ____ the plan didn't change, the volumes were split into 24 parts.</p>
+    <p class="body" style="color:var(--ink-soft);font-size:clamp(13px,1.3vw,17px)">A. Despite　B. Although　C. Because　D. Unless</p>
+    <button class="reveal-btn">显示答案</button>
+    <div class="reveal-ans"><b>B</b>。横线后是完整句子，用连词 although；despite 后接名词短语。</div>
+  </div>
+  <div class="qcard card">
+    <p class="qstem"><b>3.</b> 翻译：The final book in the collection lists the 262 'firsts' that were described in earlier volumes.</p>
+    <button class="reveal-btn">显示参考答案</button>
+    <div class="reveal-ans"><b>参考译文：</b>这套丛书中的最后一册，列出了此前各卷所记述的 262 项"首创"。（注意：collection 译为"丛书"；定语从句前置为"……的"）</div>
+  </div>
+  <div class="coach">互动（3 分钟）：第 1、2 题学生齐答，讲清选项辨析；第 3 题给 1 分钟动笔再展示译文，点评"定语从句的翻译顺序"。</div>
+  <span class="sno">19 / 21</span>
+</section>
+
+<!-- ===== 20 四级真题·翻译实战 ===== -->
+<section class="slide" data-title="四级真题·翻译实战">
+  <div class="kicker">CET-4 REAL TEST · 四级真题</div>
+  <h2 class="h2">翻译真题实战（2025 年 6 月 · 第 1 套）</h2>
+  <div class="card" style="max-width:1200px;margin-top:16px;border-left:5px solid var(--cinnabar)">
+    <span class="pill zhuxi">Part IV Translation · 30 minutes</span>
+    <p class="body" style="margin-top:12px;color:var(--ink)">将下面段落译成英文：</p>
+    <p style="font-family:var(--serif);font-size:clamp(16px,1.7vw,22px);line-height:1.9;margin-top:10px;color:var(--azure-deep)">
+      被誉为"杂交水稻之父"的袁隆平和他的科研团队克服重重困难，研发出了一种超级杂交水稻。这项技术获得了举世公认的巨大成功。通过这项技术的应用，水稻抗旱抗病能力更强，能适应不同的气候和土壤条件，产量可提高 20%-30%。超级杂交水稻营养丰富，口感更佳。目前，这项技术已经在许多国家得到广泛应用，为全球粮食安全做出了巨大贡献。
+    </p>
+  </div>
+  <p class="body" style="color:var(--ink-faint);font-size:clamp(15px,1.5vw,20px)">真题原文来源：新东方四六级频道（2025 年 6 月考试）；与课文第 14 段"agriculture 农业"领域完美呼应。</p>
+  <div class="coach">实战环节（4 分钟）：先给 3 分钟让学生试译（动笔！），提醒三步走——断句 → 找主谓 → 处理修饰。提示词块：be hailed as the father of…、overcome difficulties、recognized worldwide、increase by 20% to 30%。</div>
+  <span class="sno"></span>
+</section>
+
+<!-- ===== 21 四级真题·参考译文 ===== -->
+<section class="slide" data-title="四级真题·参考译文">
+  <div class="kicker">REFERENCE TRANSLATION · 参考译文</div>
+  <h2 class="h2">参考译文与评分点</h2>
+  <div class="card" style="max-width:1200px;margin-top:14px;border-left:5px solid var(--celadon)">
+    <span class="pill qing">参考译文（机构解析版）</span>
+    <p style="font-family:var(--lat);font-size:clamp(14px,1.55vw,20px);line-height:1.75;margin-top:8px;color:var(--ink)">
+      Hailed as the "father of hybrid rice", Yuan Longping and his research team overcame numerous difficulties and developed a kind of super hybrid rice. This technology has achieved great success recognized around the world. With the application of this technology, rice has become more resistant to drought and diseases and adapted to different climates and soil conditions, with the output increased by 20% to 30%. Super hybrid rice is rich in nutrition and tastes better. At present, this technology has been widely applied in many countries, making a great contribution to global food security.
+    </p>
+  </div>
+  <div class="duo" style="margin-top:8px">
+    <div class="card" style="border-top:4px solid var(--cinnabar)">
+      <span class="pill zhuxi">词块一</span>
+      <ul style="list-style:none;margin-top:4px">
+        <li style="font-size:clamp(12.5px,1.3vw,17px);color:var(--ink-soft);padding:3px 0;border-bottom:1px dashed var(--line)">"被誉为……之父"→ be hailed / known as the father of…</li>
+        <li style="font-size:clamp(12.5px,1.3vw,17px);color:var(--ink-soft);padding:3px 0;border-bottom:1px dashed var(--line)">"克服重重困难"→ overcome numerous difficulties</li>
+        <li style="font-size:clamp(12.5px,1.3vw,17px);color:var(--ink-soft);padding:3px 0;border-bottom:1px dashed var(--line)">"举世公认"→ recognized around the world</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:4px solid var(--azure)">
+      <span class="pill">句式要点</span>
+      <ul style="list-style:none;margin-top:4px">
+        <li style="font-size:clamp(12.5px,1.3vw,17px);color:var(--ink-soft);padding:3px 0;border-bottom:1px dashed var(--line)">"产量可提高 20%-30%"→ with the output increased by…（独立结构）</li>
+        <li style="font-size:clamp(12.5px,1.3vw,17px);color:var(--ink-soft);padding:3px 0;border-bottom:1px dashed var(--line)">"为……做出巨大贡献"→ make a great contribution to…</li>
+        <li style="font-size:clamp(12.5px,1.3vw,17px);color:var(--ink-soft);padding:3px 0">被动语态贯穿全文，与课文 were split / were described 呼应</li>
+      </ul>
+    </div>
+  </div>
+  <div class="coach">对照点评（3 分钟）：逐句展示参考译文，重点讲"被动语态 + 独立结构"如何用在本真题中；强调：真题主题与课文（262 项首创中的农业领域）互为印证，这就是"以考促学、学以致用"。</div>
+  <span class="sno"></span>
+</section>
+
+<!-- ===== 22 课后练习·北斗真题 ===== -->
+<section class="slide" data-title="课后练习·北斗真题">
+  <div class="kicker">HOMEWORK · 真题延伸</div>
+  <h2 class="h2">课后练习：北斗卫星真题（2025 年 6 月）</h2>
+  <div class="card" style="max-width:1200px;margin-top:16px;border-left:5px solid var(--gold)">
+    <span class="pill jin">课后作业 · 下节课前完成</span>
+    <p style="font-family:var(--serif);font-size:clamp(15px,1.6vw,20px);line-height:1.9;margin-top:12px;color:var(--azure-deep)">
+      北斗卫星导航系统的成功研制，是中国自从改革开放以来一项重大的技术进步。研发人员经过不懈努力，攻克了一系列技术难题，成功地实现了全球覆盖和高精度定位，使中国成为少数几个独立拥有卫星定位导航系统的国家之一。北斗系统已经广泛地运用于公共交通、灾害救援、天气预测、公共安全等诸多领域。
+    </p>
+  </div>
+  <p class="body" style="margin-top:14px"><b style="color:var(--cinnabar)">提示：</b>注意课文词 <b>navigation</b>（导航/航海）——北斗正是现代中国的 navigation "首创"；翻译时多用被动语态与 with 独立结构。</p>
+  <div class="coach">布置作业（1 分钟）：下节课前交纸质译文。讲稿提示参考译文要点：The successful development of the BeiDou Navigation Satellite System is a major technological progress…；through relentless efforts, the researchers overcame a series of technical challenges；making China one of the few countries that independently own…；has been widely applied in public transportation, disaster rescue, weather forecasting and public security。</div>
+  <span class="sno"></span>
+</section>
+
+<!-- ===== 23 小结与作业 ===== -->
+<section class="slide" data-title="小结与作业">
+  <div class="kicker">SUMMARY · 小结与作业</div>
+  <h2 class="h2">今天，你带走了什么？</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;max-width:1200px;margin-top:12px">
+    <div class="card"><span class="pill">词汇回顾</span>
+      <p class="body" style="margin-top:10px">firsts / split / publish / list / include<br>academic / institute / collection / volume / conclusion / reflection</p>
+    </div>
+    <div class="card"><span class="pill zhuxi">语法回顾</span>
+      <p class="body" style="margin-top:10px">so…that…　although（不连 but）<br>被动语态　非谓语 including / described<br>长同位语＋定语从句（主干法）</p>
+    </div>
+    <div class="card"><span class="pill qing">文化·思政</span>
+      <p class="body" style="margin-top:10px">李约瑟与 262 项"首创"<br>"李约瑟之问"与当代回答<br>文化自信 · 科学精神 · 文明互鉴</p>
+    </div>
+  </div>
+  <div class="card" style="max-width:1200px;margin-top:12px;border-left:5px solid var(--gold)">
+    <span class="pill jin">课后作业</span>
+    <p class="body" style="margin-top:8px">① 背诵第 14 段，标注所有被动结构；② 用 so…that 和 although 各造一句；③ 完成"北斗卫星"真题翻译（第 22 页）；④ 用英文写一段 60 词短文，介绍一项你最喜欢的中国古代发明。</p>
+  </div>
+  <div class="coach">收尾（2 分钟）：带学生齐读三个回顾框，布置作业并说明第 ③ 题将作为下节课的课堂展示素材。</div>
+  <span class="sno">20 / 21</span>
+</section>
+
+<!-- ===== 21 结束页 ===== -->
+<section class="slide" data-title="结束页">
+  <div style="text-align:center;max-width:1000px;margin:0 auto">
+    <div class="kicker" style="justify-content:center">THANK YOU · 谢谢大家</div>
+    <h1 class="h1" style="font-size:clamp(44px,7vw,92px)">讲好中国故事<br>从学好英语开始</h1>
+    <p class="lead" style="margin-top:22px;text-align:center">愿你在每一个"first"里，看见文明的厚度，也看见自己的担当。</p>
+    <div style="display:inline-flex;align-items:center;gap:12px;margin-top:34px;background:var(--paper-soft);border:1px solid var(--line);border-radius:99px;padding:12px 26px;box-shadow:var(--shadow,0 10px 30px rgba(44,42,36,.1))">
+      <span style="width:40px;height:40px;border-radius:9px;background:var(--cinnabar);color:#F6F1E5;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:22px;font-weight:900">史</span>
+      <span style="font-family:var(--serif);font-weight:700;font-size:clamp(16px,1.8vw,22px);color:var(--azure-deep)">《中国科学技术史》精读课 · 下课</span>
+    </div>
+  </div>
+  <div class="coach" style="text-align:left">结语（30 秒）：用一句升华收束——"文明的自信，来自对历史的尊重；民族的力量，来自对未来的担当。"提醒学生下节课带短文作业。</div>
+  <span class="sno">21 / 21</span>
+</section>
+</main>
+<script>
+/* ===== 幻灯片导航 ===== */
+var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+var total = slides.length, cur = 0;
+/* 自动生成每页页码 */
+slides.forEach(function(s,i){
+  var sno = s.querySelector(".sno");
+  if(sno) sno.textContent = ("0" + (i+1)).slice(-2) + " / " + total;
+});
+goTo(0); /* 初始化页数与进度条 */
+function goTo(n){
+  if(n < 0 || n >= total) return;
+  slides[cur].classList.remove("active");
+  cur = n;
+  slides[cur].classList.add("active");
+  document.getElementById("pageNo").textContent = (n+1) + " / " + total;
+  document.getElementById("progBar").style.width = ((n+1)/total*100) + "%";
+  window.scrollTo(0,0);
+}
+document.getElementById("pgPrev").addEventListener("click", function(){ goTo(cur-1); });
+document.getElementById("pgNext").addEventListener("click", function(){ goTo(cur+1); });
+document.addEventListener("keydown", function(e){
+  if(e.key === "ArrowRight" || e.key === "PageDown" || e.key === " "){ e.preventDefault(); goTo(cur+1); }
+  else if(e.key === "ArrowLeft" || e.key === "PageUp"){ e.preventDefault(); goTo(cur-1); }
+  else if(e.key === "Home"){ goTo(0); }
+  else if(e.key === "End"){ goTo(total-1); }
+  else if(e.key === "t" || e.key === "T"){ toggleCoach(); }
+  else if(e.key === "f" || e.key === "F"){ toggleFs(); }
+});
+/* 讲稿模式 */
+function toggleCoach(){
+  document.getElementById("deck").classList.toggle("coach-mode");
+  document.getElementById("coachBtn").classList.toggle("on");
+}
+document.getElementById("coachBtn").addEventListener("click", toggleCoach);
+/* 全屏 */
+function toggleFs(){
+  if(document.fullscreenElement){ document.exitFullscreen(); }
+  else{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen().catch(function(){}); }
+}
+document.getElementById("fsBtn").addEventListener("click", toggleFs);
+/* 课堂互动题：揭示答案 */
+document.querySelectorAll(".reveal-btn").forEach(function(b){
+  b.addEventListener("click", function(){
+    var a = b.parentElement.querySelector(".reveal-ans");
+    if(a){ a.classList.toggle("show"); b.textContent = a.classList.contains("show") ? "收起答案" : "显示答案"; }
+  });
+});
+/* 长难句色块：点击高亮（课堂点读用） */
+document.querySelectorAll(".slab span").forEach(function(sp){
+  sp.addEventListener("click", function(){ sp.classList.toggle("sel"); });
+});
+</script>
+</body>
+</html>
