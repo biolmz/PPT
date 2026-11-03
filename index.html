@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>lmz_课件</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Helvetica Neue', 'Noto Sans', Roboto, sans-serif;
+      background: linear-gradient(145deg, #f6f9fc 0%, #e9f0f7 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #1e3b5c;
+      margin-bottom: 2.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 1.6rem;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .link-item {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      padding: 0.9rem 1rem;
+      border-radius: 1rem;
+      transition: background 0.2s;
+    }
+
+    .link-item:hover {
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .icon {
+      font-size: 1.8rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .link-item h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #1c2f44;
+      margin-bottom: 0.15rem;
+    }
+
+    .link-item p {
+      font-size: 0.88rem;
+      color: #5a748d;
+    }
+
+    .arrow {
+      margin-left: auto;
+      font-size: 1.2rem;
+      color: #9bb8d4;
+      transition: transform 0.2s, color 0.2s;
+    }
+
+    .link-item:hover .arrow {
+      transform: translateX(4px);
+      color: #4a7db5;
+    }
+  </style>
+</head>
+<body>
+  <div class="title">📚 课件导航</div>
+
+  <div class="links">
+    <a class="link-item" href="eng.html">
+      <span class="icon">📖</span>
+      <div>
+        <h2>大学英语</h2>
+        <p>14、15段</p>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <a class="link-item" href="#">
+      <span class="icon">📘</span>
+      <div>
+        <h2>马原</h2>
+        <p>小组作业</p>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</body>
+</html>
