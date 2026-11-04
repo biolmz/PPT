@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>马原与生活 · 从生物学视角探问人生的意义</title>
+<style>
+  :root{
+    --paper:#f6f1e7;        /* 羊皮纸底 */
+    --paper-2:#efe8d8;
+    --card:#fcfaf4;
+    --ink:#2a2520;          /* 深墨 */
+    --ink-soft:#6b6459;
+    --red:#8c2f39;          /* 绛红 */
+    --red-deep:#6e2129;
+    --gold:#b08a3e;         /* 赭金 */
+    --gold-soft:#c9a96a;
+    --line:#d9cfba;
+    --serif: Georgia, "Times New Roman", "Songti SC", "SimSun", "Noto Serif CJK SC", serif;
+    --sans: -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html,body{height:100%;}
+
+  body{
+    font-family:var(--sans);
+    background:var(--paper);
+    color:var(--ink);
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ===== 幻灯片容器 ===== */
+  .deck{position:relative;width:100vw;height:100vh;}
+
+  .slide{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;
+    padding:7vh 8vw 12vh;
+    opacity:0;visibility:hidden;
+    transform:translateY(18px);
+    transition:opacity .5s ease, transform .5s ease, visibility 0s linear .5s;
+    overflow:hidden;
+  }
+  .slide.active{
+    opacity:1;visibility:visible;
+    transform:translateY(0);
+    transition:opacity .55s ease, transform .55s ease;
+  }
+
+  /* 章节角标 */
+  .kicker{
+    font-size:13px;letter-spacing:.28em;color:var(--gold);
+    text-transform:uppercase;font-weight:600;
+    display:flex;align-items:center;gap:12px;
+  }
+  .kicker::before{content:"";width:34px;height:1px;background:var(--gold);}
+
+  h1.title{
+    font-family:var(--serif);font-weight:700;
+    font-size:clamp(30px,4.2vw,56px);
+    line-height:1.25;margin:1.6vh 0 2.4vh;
+    color:var(--red-deep);
+  }
+  h1.title .dot{color:var(--gold);}
+
+  h2.sub{
+    font-family:var(--serif);font-weight:600;
+    font-size:clamp(19px,2.2vw,28px);
+    color:var(--ink);margin-bottom:2.6vh;
+  }
+
+  .lead{
+    font-size:clamp(15px,1.5vw,19px);
+    line-height:1.9;color:var(--ink-soft);
+    max-width:62ch;
+  }
+  .lead strong{color:var(--ink);}
+  .lead em{color:var(--red);font-style:normal;font-weight:600;}
+
+  /* 双栏 */
+  .cols{display:grid;grid-template-columns:1.05fr .95fr;gap:4vw;align-items:center;flex:1;min-height:0;}
+  .cols.even{grid-template-columns:1fr 1fr;}
+  @media (max-width:760px){.cols,.cols.even{grid-template-columns:1fr;}}
+
+  /* 引用块 */
+  .quote{
+    border-left:3px solid var(--gold);
+    background:var(--card);
+    padding:2.2vh 2vw;margin:2.4vh 0;
+    font-family:var(--serif);
+    font-size:clamp(16px,1.7vw,22px);
+    line-height:1.75;color:var(--red-deep);
+    box-shadow:0 2px 14px rgba(110,33,41,.06);
+  }
+  .quote .who{
+    display:block;margin-top:1.2vh;font-family:var(--sans);
+    font-size:13px;color:var(--ink-soft);letter-spacing:.06em;
+  }
+
+  /* 要点卡片 */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6vw;margin-top:2vh;}
+  @media (max-width:760px){.cards{grid-template-columns:1fr;}}
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    padding:2.4vh 1.6vw;border-radius:2px;
+    box-shadow:0 2px 12px rgba(42,37,32,.05);
+  }
+  .card .n{
+    font-family:var(--serif);font-size:34px;color:var(--gold);
+    line-height:1;margin-bottom:1vh;
+  }
+  .card h3{font-family:var(--serif);font-size:19px;color:var(--red-deep);margin-bottom:1vh;}
+  .card p{font-size:14px;line-height:1.8;color:var(--ink-soft);}
+
+  ul.pts{list-style:none;margin:1.6vh 0;}
+  ul.pts li{
+    position:relative;padding-left:22px;margin-bottom:1.6vh;
+    font-size:clamp(15px,1.5vw,18px);line-height:1.75;color:var(--ink);
+  }
+  ul.pts li::before{
+    content:"";position:absolute;left:0;top:.5em;
+    width:9px;height:9px;background:var(--red);
+    transform:rotate(45deg);
+  }
+  ul.pts li b{color:var(--red-deep);}
+  ul.pts li .sub{display:block;font-size:14px;color:var(--ink-soft);margin-top:.3vh;}
+
+  /* 关键词标签 */
+  .tagline{display:flex;flex-wrap:wrap;gap:10px;margin-top:2vh;}
+  .tagline span{
+    font-size:13px;letter-spacing:.08em;color:var(--red-deep);
+    border:1px solid var(--red);border-radius:2px;padding:5px 13px;
+    background:rgba(140,47,57,.04);
+  }
+
+  /* ===== 封面 ===== */
+  .cover{
+    background:linear-gradient(135deg,var(--red-deep) 0%,var(--red) 55%,#a54a3f 100%);
+    color:#f6f1e7;justify-content:center;align-items:center;text-align:center;
+  }
+  .cover .seal{
+    width:86px;height:86px;border:2px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 3vh;transform:rotate(45deg);
+  }
+  .cover .seal span{transform:rotate(-45deg);font-family:var(--serif);font-size:26px;color:var(--gold);font-weight:700;}
+  .cover h1{
+    font-family:var(--serif);font-weight:700;
+    font-size:clamp(48px,8vw,110px);
+    letter-spacing:.12em;color:#f6f1e7;line-height:1.1;
+  }
+  .cover .subtitle{
+    font-family:var(--serif);font-size:clamp(17px,2.3vw,27px);
+    color:var(--gold-soft);letter-spacing:.24em;margin-top:2.6vh;
+  }
+  .cover .rule{width:120px;height:1px;background:var(--gold);margin:3.4vh auto;}
+  .cover .meta{font-size:14px;letter-spacing:.2em;color:rgba(246,241,231,.82);line-height:2.1;}
+
+  /* ===== 目录 ===== */
+  .toc{display:grid;grid-template-columns:1fr 1fr;gap:2.4vh 4vw;margin-top:2vh;}
+  @media (max-width:760px){.toc{grid-template-columns:1fr;}}
+  .toc .item{
+    display:flex;align-items:baseline;gap:16px;padding:1.8vh 0;
+    border-bottom:1px solid var(--line);
+  }
+  .toc .idx{font-family:var(--serif);font-size:30px;color:var(--gold);font-weight:700;}
+  .toc .txt b{display:block;font-family:var(--serif);font-size:19px;color:var(--ink);margin-bottom:.4vh;}
+  .toc .txt span{font-size:13px;color:var(--ink-soft);letter-spacing:.04em;}
+
+  /* 总结页 */
+  .finale{
+    justify-content:center;align-items:center;text-align:center;
+  }
+  .finale .big{
+    font-family:var(--serif);font-size:clamp(28px,4.6vw,60px);
+    color:var(--red-deep);line-height:1.5;font-weight:700;
+  }
+  .finale .big .hl{color:var(--gold);}
+  .finale .foot{margin-top:4vh;font-size:16px;color:var(--ink-soft);letter-spacing:.12em;}
+
+  /* 参考文献 */
+  .refs{font-size:14px;line-height:2.1;color:var(--ink-soft);column-count:2;column-gap:4vw;margin-top:1vh;}
+  @media (max-width:760px){.refs{column-count:1;}}
+  .refs li{margin-bottom:.6vh;list-style:none;padding-left:18px;position:relative;}
+  .refs li::before{content:"";position:absolute;left:0;top:.75em;width:6px;height:6px;background:var(--gold);transform:rotate(45deg);}
+
+  /* 分工表 */
+  table.members{width:100%;border-collapse:collapse;margin-top:2vh;font-size:15px;}
+  table.members th,table.members td{
+    border:1px solid var(--line);padding:1.6vh 1.4vw;text-align:left;
+  }
+  table.members th{background:var(--paper-2);color:var(--red-deep);font-weight:600;font-family:var(--serif);font-size:16px;}
+  table.members td{color:var(--ink);}
+  table.members td.role{color:var(--ink-soft);}
+
+  /* SVG 容器 */
+  .fig{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:0;gap:1.6vh;}
+  .fig svg{max-width:100%;max-height:44vh;}
+  .fig .cap{font-size:14px;color:var(--ink-soft);letter-spacing:.04em;text-align:center;line-height:1.6;}
+
+  /* ===== 底部导航 ===== */
+  .nav{
+    position:fixed;left:0;right:0;bottom:0;height:64px;
+    background:rgba(246,241,231,.92);backdrop-filter:blur(6px);
+    border-top:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 3vw;z-index:50;
+  }
+  .nav .btn{
+    font-family:var(--sans);font-size:14px;color:var(--red-deep);
+    background:none;border:1px solid var(--red);border-radius:2px;
+    padding:8px 18px;cursor:pointer;letter-spacing:.08em;
+    transition:background .2s,color .2s;
+  }
+  .nav .btn:hover{background:var(--red);color:#f6f1e7;}
+  .nav .btn:disabled{opacity:.28;cursor:default;}
+  .nav .btn:disabled:hover{background:none;color:var(--red-deep);}
+  .nav .page{
+    font-family:var(--serif);font-size:15px;color:var(--ink-soft);letter-spacing:.1em;
+  }
+  .nav .page b{color:var(--red-deep);font-size:19px;}
+  .nav .hint{font-size:12px;color:var(--ink-soft);letter-spacing:.06em;}
+
+  .bar{position:fixed;left:0;right:0;bottom:64px;height:3px;background:var(--line);z-index:51;}
+  .bar i{display:block;height:100%;background:var(--red);transition:width .35s ease;}
+</style>
+</head>
+<body>
+
+<div class="deck">
+
+  <!-- ============ 1 封面 ============ -->
+  <section class="slide cover">
+    <div class="seal"><span>哲</span></div>
+    <h1>马原与生活</h1>
+    <div class="subtitle">从生物学视角探问人生的意义</div>
+    <div class="rule"></div>
+    <div class="meta">
+      马克思主义基本原理 · 小组作业<br>
+      <span style="opacity:.7">[ 小组成员 ]</span>　·　2026
+    </div>
+  </section>
+
+  <!-- ============ 2 引子 ============ -->
+  <section class="slide">
+    <div class="kicker">绪论 · 问题的提出</div>
+    <h1 class="title">一个古老而常新的问题<span class="dot">。</span></h1>
+    <p class="lead">
+      我是谁？从哪里来？要到哪里去？——这是每一个时代、每一个人都无法绕开的追问。
+      面对它，<strong>生物学</strong>回答"生命如何存在"，<strong>马克思主义</strong>回答"生命应当如何存在"。
+      本组作业让这两条思路相遇，在科学与哲学的交叉处，<em>探寻人生的意义</em>。
+    </p>
+    <div class="quote">
+      以往的哲学家只是用不同的方式解释世界，而问题在于改变世界。
+      <span class="who">—— 马克思《关于费尔巴哈的提纲》第十一条</span>
+    </div>
+  </section>
+
+  <!-- ============ 3 目录 ============ -->
+  <section class="slide">
+    <div class="kicker">目录 · 结构</div>
+    <h1 class="title">一条从物质走向意义的线索<span class="dot">。</span></h1>
+    <div class="toc">
+      <div class="item"><span class="idx">01</span>
+        <div class="txt"><b>物质的世界，能思想的生命</b><span>唯物论 · 意识是人脑的机能</span></div></div>
+      <div class="item"><span class="idx">02</span>
+        <div class="txt"><b>生命的辩证法</b><span>对立统一 · 量变质变 · 否定之否定</span></div></div>
+      <div class="item"><span class="idx">03</span>
+        <div class="txt"><b>实践创造了人本身</b><span>认识论与唯物史观 · 人的本质</span></div></div>
+      <div class="item"><span class="idx">04</span>
+        <div class="txt"><b>在有限中创造无限</b><span>人生的意义 · 自由而全面的发展</span></div></div>
+    </div>
+  </section>
+
+  <!-- ============ 4 意识是人脑的机能 ============ -->
+  <section class="slide">
+    <div class="kicker">01 · 唯物论</div>
+    <h1 class="title">意识：人脑的机能<span class="dot">。</span></h1>
+    <div class="cols">
+      <div>
+        <p class="lead">马克思主义唯物论认为：<strong>物质第一性，意识第二性</strong>，意识是物质世界长期发展的产物，是人脑的机能、客观世界的主观映像。</p>
+        <ul class="pts">
+          <li><b>观念的起源</b><span class="sub">"观念的东西不外是移入人的头脑并在人的头脑中改造过的物质的东西而已。"</span></li>
+          <li><b>生物学的印证</b><span class="sub">人脑约 <b>860 亿</b>神经元，经突触传递与电化学信号，产生思维、情感与自我意识。</span></li>
+          <li><b>结论</b><span class="sub">意识不是超自然的存在，而是物质长期进化的最高产物——精神世界有其坚实的物质根基。</span></li>
+        </ul>
+      </div>
+      <div class="fig">
+        <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="神经元示意图">
+          <defs>
+            <radialGradient id="soma" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#c9a96a"/><stop offset="100%" stop-color="#8c2f39"/>
+            </radialGradient>
+          </defs>
+          <ellipse cx="150" cy="120" rx="42" ry="34" fill="url(#soma)"/>
+          <!-- 树突 -->
+          <g stroke="#b08a3e" stroke-width="2" fill="none" stroke-linecap="round">
+            <path d="M130 95 L100 62 L78 68"/>
+            <path d="M150 88 L152 54 L172 48"/>
+            <path d="M170 98 L200 72 L222 78"/>
+            <path d="M120 120 L86 108 L66 116"/>
+          </g>
+          <!-- 轴突 -->
+          <path d="M188 130 L240 150 L250 190" stroke="#8c2f39" stroke-width="2.4" fill="none"/>
+          <circle cx="250" cy="190" r="7" fill="#6e2129"/>
+          <circle cx="270" cy="206" r="4" fill="#c9a96a"/>
+          <text x="160" y="236" text-anchor="middle" font-size="13" fill="#6b6459" font-family="inherit">神经元：意识活动的物质基础</text>
+        </svg>
+      </div>
+    </div>
+    <div class="tagline"><span>物质第一性</span><span>人脑约 860 亿神经元</span><span>意识是物质的产物</span></div>
+  </section>
+
+  <!-- ============ 5 生命是负熵运动 ============ -->
+  <section class="slide">
+    <div class="kicker">01 · 唯物论 / 辩证法</div>
+    <h1 class="title">生命是什么：一场负熵运动<span class="dot">。</span></h1>
+    <div class="cols even">
+      <div>
+        <div class="quote">
+          生命是蛋白体的存在方式，这种存在方式本质上就在于这些蛋白体的化学组成部分的不断的自我更新。
+          <span class="who">—— 恩格斯《反杜林论》</span>
+        </div>
+      </div>
+      <div>
+        <p class="lead">恩格斯对生命的定义，与近代生物学惊人地一致：生命的核心在于<strong>新陈代谢</strong>——不断从外界摄取物质、同化为自身，又不断分解排出。</p>
+        <ul class="pts">
+          <li><b>同化作用与异化作用</b><span class="sub">合成与分解的对立统一，恰是生命与非生命的根本分野。</span></li>
+          <li><b>薛定谔的洞见</b><span class="sub">"生命以负熵为生"——在趋向混乱的宇宙里，生命维持着局部的有序。</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:2vh">生命本身，就是唯物辩证法最生动的注脚——<em>矛盾并非生命的缺陷，而是生命得以存在的机制。</em></p>
+  </section>
+
+  <!-- ============ 6 对立统一 ============ -->
+  <section class="slide">
+    <div class="kicker">02 · 辩证法之一</div>
+    <h1 class="title">对立统一：生命的矛盾<span class="dot">。</span></h1>
+    <p class="lead">矛盾是事物发展的根本动力。生命的每时每刻，都处于对立面的统一之中：</p>
+    <div class="cards">
+      <div class="card"><div class="n">同化</div>
+        <h3>同化 与 异化</h3>
+        <p>合成代谢与分解代谢此消彼长，共同维持着生命体的动态平衡。</p>
+      </div>
+      <div class="card"><div class="n">遗传</div>
+        <h3>遗传 与 变异</h3>
+        <p>DNA 双螺旋既要稳定地复制自身，又在复制中产生变异——稳定与改变的对立，孕育了进化的可能。</p>
+      </div>
+      <div class="card"><div class="n">生死</div>
+        <h3>生 与 死</h3>
+        <p>个体生命以死亡为终点，却又通过繁衍让生命信息在死亡中延续。</p>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:2.4vh">理解了对立统一，我们才能真正理解生命——<em>它不是静止的、完美的状态，而是矛盾不断产生又不断解决的过程。</em></p>
+  </section>
+
+  <!-- ============ 7 量变质变 ============ -->
+  <section class="slide">
+    <div class="kicker">02 · 辩证法之二</div>
+    <h1 class="title">量变质变：进化的逻辑<span class="dot">。</span></h1>
+    <div class="cols">
+      <div>
+        <p class="lead">达尔文的自然选择，正是量变质变规律的绝佳体现：微小的可遗传变异经长期积累，最终突破临界点，<strong>量变引起质变</strong>，新物种诞生。</p>
+        <ul class="pts">
+          <li><b>从猿到人</b><span class="sub">脑容量从约 <b>400ml</b> 到 <b>1400ml</b> 的渐进累积，最终质变为"会思想的芦苇"。</span></li>
+          <li><b>个体发育</b><span class="sub">一个受精卵经无数次有丝分裂与分化，量变积累为质变，形成完整的生命体。</span></li>
+        </ul>
+      </div>
+      <div class="fig">
+        <svg viewBox="0 0 340 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="进化时间轴">
+          <line x1="30" y1="120" x2="320" y2="120" stroke="#b08a3e" stroke-width="2"/>
+          <g font-size="12" fill="#6b6459" text-anchor="middle">
+            <circle cx="70" cy="120" r="6" fill="#8c2f39"/>
+            <text x="70" y="102">南方古猿</text><text x="70" y="142">约400ml</text>
+            <circle cx="150" cy="120" r="9" fill="#8c2f39"/>
+            <text x="150" y="100">直立人</text><text x="150" y="144">约1000ml</text>
+            <circle cx="230" cy="120" r="12" fill="#8c2f39"/>
+            <text x="230" y="98">早期智人</text><text x="230" y="146">约1350ml</text>
+            <circle cx="305" cy="120" r="15" fill="#6e2129"/>
+            <text x="305" y="94">现代人</text><text x="305" y="148">约1400ml</text>
+          </g>
+          <text x="170" y="200" text-anchor="middle" font-size="13" fill="#6b6459">量变的累积 → 质变的飞跃</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 8 否定之否定 ============ -->
+  <section class="slide">
+    <div class="kicker">02 · 辩证法之三</div>
+    <h1 class="title">否定之否定：螺旋上升<span class="dot">。</span></h1>
+    <div class="cols even">
+      <div class="fig">
+        <svg viewBox="0 0 260 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="螺旋上升">
+          <path d="M 136.0 118.0 L 136.5 117.4 L 136.9 116.6 L 137.2 115.8 L 137.4 114.9 L 137.5 113.9 L 137.5 112.9 L 137.3 111.8 L 137.0 110.8 L 136.6 109.7 L 136.0 108.7 L 135.3 107.7 L 134.4 106.7 L 133.4 105.8 L 132.2 105.1 L 131.0 104.4 L 129.6 103.9 L 128.1 103.5 L 126.6 103.2 L 124.9 103.2 L 123.3 103.3 L 121.6 103.6 L 119.9 104.1 L 118.2 104.8 L 116.6 105.7 L 115.0 106.8 L 113.5 108.1 L 112.1 109.6 L 110.9 111.2 L 109.8 113.0 L 108.9 115.0 L 108.2 117.1 L 107.7 119.3 L 107.5 121.6 L 107.5 124.0 L 107.7 126.4 L 108.2 128.8 L 108.9 131.2 L 109.9 133.5 L 111.2 135.8 L 112.8 138.0 L 114.5 140.0 L 116.6 141.9 L 118.8 143.6 L 121.3 145.0 L 123.9 146.3 L 126.7 147.2 L 129.6 147.9 L 132.7 148.3 L 135.8 148.4 L 138.9 148.2 L 142.1 147.6 L 145.2 146.7 L 148.3 145.5 L 151.3 143.9 L 154.1 142.0 L 156.8 139.8 L 159.2 137.3 L 161.5 134.5 L 163.4 131.5 L 165.1 128.2 L 166.4 124.8 L 167.4 121.1 L 168.1 117.4 L 168.3 113.5 L 168.2 109.6 L 167.6 105.7 L 166.7 101.8 L 165.3 97.9 L 163.6 94.2 L 161.4 90.6 L 158.9 87.3 L 156.0 84.1 L 152.7 81.3 L 149.2 78.7 L 145.3 76.5 L 141.2 74.7 L 136.9 73.3 L 132.5 72.3 L 127.9 71.8 L 123.2 71.8 L 118.5 72.2 L 113.8 73.1 L 109.2 74.5 L 104.7 76.3 L 100.3 78.6 L 96.2 81.4 L 92.3 84.6 L 88.8 88.3 L 85.6 92.3 L 82.8 96.6 L 80.4 101.3 L 78.5 106.2 L 77.1 111.4 L 76.1 116.7 L 75.8 122.1 L 75.9 127.6 L 76.7 133.1 L 78.0 138.5 L 79.8 143.8 L 82.2 149.0 L 85.2 153.9 L 88.6 158.6 L 92.5 162.9 L 96.9 166.8 L 101.7 170.3 L 106.9 173.4 L 112.4 175.9 L 118.1 177.8 L 124.1 179.2 L 130.3 180.0 L 136.5 180.2 L 142.8 179.7 L 149.0 178.6 L 155.2 176.9 L 161.2 174.5 L 167.0 171.5 L 172.5 168.0 L 177.6 163.8 L 182.4 159.2 L 186.6 154.0 L 190.4 148.4 L 193.6 142.4 L 196.2 136.1 L 198.2 129.5 L 199.5 122.6" stroke="#8c2f39" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <circle cx="136" cy="118" r="5" fill="#b08a3e"/>
+          <circle cx="199.5" cy="122.6" r="6" fill="#6e2129"/>
+        </svg>
+        <div class="cap">螺旋式上升——不是回到原点，而是迈向更高的阶段</div>
+      </div>
+      <div>
+        <p class="lead">事物的发展不是直线，而是<strong>螺旋式上升、波浪式前进</strong>。生命史同样如此：</p>
+        <ul class="pts">
+          <li><b>个体层面</b><span class="sub">受精卵→分化→发育→衰老死亡，是对生命初始状态的一次"否定"。</span></li>
+          <li><b>种群层面</b><span class="sub">一代代的更替中，遗传信息在"否定"里延续并进化——否定之否定，让生命超越了死亡。</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 9 实践创造人本身 ============ -->
+  <section class="slide">
+    <div class="kicker">03 · 认识论与唯物史观</div>
+    <h1 class="title">实践创造了人本身<span class="dot">。</span></h1>
+    <div class="cols">
+      <div>
+        <div class="quote">
+          劳动创造了人本身。
+          <span class="who">—— 恩格斯《劳动在从猿到人转变过程中的作用》</span>
+        </div>
+        <p class="lead">人的诞生，是生物学事实与社会性实践的统一。</p>
+      </div>
+      <div>
+        <ul class="pts">
+          <li><b>直立行走</b><span class="sub">解放了双手，为制造和使用工具奠定生理前提。</span></li>
+          <li><b>制造工具</b><span class="sub">劳动使人改造自然，也在改造自然的实践中改造了自身。</span></li>
+          <li><b>大脑发达与语言</b><span class="sub">协作与交往催生了语言和思维——"全部社会生活在本质上是实践的"。</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="tagline"><span>劳动</span><span>工具</span><span>语言</span><span>社会实践</span></div>
+  </section>
+
+  <!-- ============ 10 人的本质 ============ -->
+  <section class="slide">
+    <div class="kicker">03 · 人的本质</div>
+    <h1 class="title">人的本质：社会关系的总和<span class="dot">。</span></h1>
+    <div class="quote">
+      人的本质不是单个人所固有的抽象物，在其现实性上，它是一切社会关系的总和。
+      <span class="who">—— 马克思《关于费尔巴哈的提纲》第六条</span>
+    </div>
+    <div class="cards">
+      <div class="card"><div class="n">生物</div>
+        <h3>生物属性是前提</h3>
+        <p>人首先是自然存在物，具有生老病死、摄食繁衍等自然属性。</p>
+      </div>
+      <div class="card"><div class="n">社会</div>
+        <h3>社会属性是本质</h3>
+        <p>劳动与社会交往，把"生物人"塑造为"社会人"——人的本质在关系中生成。</p>
+      </div>
+      <div class="card"><div class="n">实践</div>
+        <h3>本质生成于实践</h3>
+        <p>人是什么，取决于他在实践中与他人、与自然结成怎样的关系。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 11 人生的意义 ============ -->
+  <section class="slide">
+    <div class="kicker">04 · 人生的意义</div>
+    <h1 class="title">在有限中创造无限<span class="dot">。</span></h1>
+    <div class="cols">
+      <div>
+        <p class="lead"><strong>生物学给出的答案是冷静的：</strong>个体生命有限，死亡不可避免，熵增是宇宙的宿命。</p>
+        <p class="lead" style="margin-top:1.6vh"><strong>马克思主义给出的答案是热烈的：</strong>人是实践的存在，能在改造世界中<em>超越个体的有限</em>，把生命价值对象化到社会与历史之中。</p>
+      </div>
+      <div>
+        <div class="quote">
+          如果我们选择了最能为人类而工作的职业……我们的幸福将属于千百万人。
+          <span class="who">—— 青年马克思《青年在选择职业时的考虑》（17 岁）</span>
+        </div>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:2.4vh">因此，人生的意义<strong>不是被"找到"的，而是在实践中被"创造"出来的</strong>——它不是悬在空中的抽象答案，而是写在我们每日的实践与选择里。</p>
+  </section>
+
+  <!-- ============ 12 自由而全面的发展 ============ -->
+  <section class="slide">
+    <div class="kicker">04 · 人生的意义</div>
+    <h1 class="title">自由而全面的发展<span class="dot">。</span></h1>
+    <div class="quote">
+      每个人的自由发展是一切人的自由发展的条件。
+      <span class="who">—— 马克思、恩格斯《共产党宣言》</span>
+    </div>
+    <div class="cols even">
+      <div>
+        <ul class="pts">
+          <li><b>向内的维度</b><span class="sub">充分发展自己的能力、个性与潜能——像生命不断自我更新那样，不断地成为自己。</span></li>
+        </ul>
+      </div>
+      <div>
+        <ul class="pts">
+          <li><b>向外的维度</b><span class="sub">为他人、为社会创造价值——个体生命的有限，在人类事业的无限中得以延续。</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:2vh">二者统一于实践：<em>在成就他人与社会的过程中，人最终成就了自己。</em></p>
+  </section>
+
+  <!-- ============ 13 总结 ============ -->
+  <section class="slide finale">
+    <div class="kicker" style="margin-bottom:4vh;">总结 · 结语</div>
+    <div class="big">生命是物质的奇迹，<br>意义是<span class="hl">实践</span>的创造。</div>
+    <div class="foot">—— 用马克思主义的辩证法认识生命，用实践的眼光书写人生 ——</div>
+  </section>
+
+  <!-- ============ 14 参考文献 ============ -->
+  <section class="slide">
+    <div class="kicker">附 · 参考文献</div>
+    <h1 class="title">主要参考文献<span class="dot">。</span></h1>
+    <ol class="refs">
+      <li>马克思．关于费尔巴哈的提纲．1845．</li>
+      <li>马克思．资本论（第二版跋）．1867．</li>
+      <li>马克思．1844 年经济学哲学手稿．1844．</li>
+      <li>马克思．青年在选择职业时的考虑．1835．</li>
+      <li>马克思、恩格斯．共产党宣言．1848．</li>
+      <li>恩格斯．反杜林论．1878．</li>
+      <li>恩格斯．自然辩证法．1873—1883．</li>
+      <li>恩格斯．劳动在从猿到人转变过程中的作用．1876．</li>
+      <li>《马克思主义基本原理》教材．高等教育出版社．</li>
+      <li>薛定谔．生命是什么．1944．（跨学科参考）</li>
+      <li>达尔文．物种起源．1859．（生物学参考）</li>
+    </ol>
+  </section>
+
+
+
+</div>
+
+<!-- 导航条 -->
+<div class="bar"><i id="bar"></i></div>
+<nav class="nav">
+  <button class="btn" id="prev" aria-label="上一页">← 上一页</button>
+  <span class="page"><b id="cur">1</b> / <span id="total">15</span></span>
+  <span class="hint">← → 或空格键翻页</span>
+  <button class="btn" id="next" aria-label="下一页">下一页 →</button>
+</nav>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var cur = 0;
+  var curEl = document.getElementById('cur');
+  var totalEl = document.getElementById('total');
+  var barEl = document.getElementById('bar');
+  var prevBtn = document.getElementById('prev');
+  var nextBtn = document.getElementById('next');
+  totalEl.textContent = total;
+
+  function show(i){
+    if(i < 0 || i >= total) return;
+    slides[cur].classList.remove('active');
+    cur = i;
+    slides[cur].classList.add('active');
+    curEl.textContent = cur + 1;
+    barEl.style.width = ((cur + 1) / total * 100) + '%';
+    prevBtn.disabled = (cur === 0);
+    nextBtn.disabled = (cur === total - 1);
+  }
+  function next(){ show(cur + 1); }
+  function prev(){ show(cur - 1); }
+
+  nextBtn.addEventListener('click', next);
+  prevBtn.addEventListener('click', prev);
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); next(); }
+    else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key === 'Home'){ show(0); }
+    else if(e.key === 'End'){ show(total - 1); }
+  });
+
+  // 触屏滑动
+  var startX = null;
+  document.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; });
+  document.addEventListener('touchend', function(e){
+    if(startX === null) return;
+    var dx = e.changedTouches[0].clientX - startX;
+    if(Math.abs(dx) > 50){ dx < 0 ? next() : prev(); }
+    startX = null;
+  });
+
+  show(0);
+})();
+</script>
+</body>
+</html>
