@@ -87,14 +87,7 @@
   <div class="title">📚 课件导航</div>
 
   <div class="links">
-    <a class="link-item" href="eng.html">
-      <span class="icon">📖</span>
-      <div>
-        <h2>大学英语</h2>
-        <p>14、15段</p>
-      </div>
-      <span class="arrow">→</span>
-    </a>
+    
 
     <a class="link-item" href="my.html">
       <span class="icon">📘</span>
@@ -105,8 +98,31 @@
       <span class="arrow">→</span>
     </a>
     
-    <a href="http://47.104.107.67:3000/s/3b23576d4f69d44d3be8df469f16fd07" >英语课件下载</a>
-    <a href="https://lmz-1375687844.cos.ap-nanjing.myqcloud.com/english.rar" >英语课件下载COS</a>
+    
+<button onclick="downloadHTML()">马原课件点击下载</button>
+
+<script>
+function downloadHTML() {
+  fetch('https://ppt.biolmz.cn/my.html') // 注意：如果跨域，fetch 会失败
+    .then(res => res.text())
+    .then(html => {
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '马原课件.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    })
+    .catch(err => {
+      alert('下载失败，可能是跨域问题。请尝试右键另存为。');
+      // 或者退回到直接打开
+      window.open('https://ppt.biolmz.cn/my.html');
+    });
+}
+</script>
     
   </div>
 </body>
